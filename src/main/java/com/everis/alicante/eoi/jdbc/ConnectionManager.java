@@ -7,9 +7,11 @@ import java.sql.SQLException;
 
 public class ConnectionManager {
 
+    private static ConnectionManager connectionManager;
+
     private Connection connection;
 
-    public ConnectionManager() {
+    private ConnectionManager() {
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/exercise1", "root", "password");
         } catch (SQLException e) {
@@ -17,8 +19,18 @@ public class ConnectionManager {
         }
     }
 
-    @PreDestroy
-    private void close() {
+    public static ConnectionManager getInstance() {
+        if (connectionManager == null) {
+            connectionManager = new ConnectionManager();
+        }
+        return connectionManager;
+    }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
+
+    public void close() {
         try {
             this.connection.close();
         } catch (SQLException e) {
